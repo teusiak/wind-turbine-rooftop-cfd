@@ -1,0 +1,71 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  Splits the single merged 'tunnel_walls' patch (created by snapping to
+  Cut001_Geometry.stl) back into 6 directional sub-patches, using thin
+  bounding-box slabs at each face of the domain to isolate the relevant faces.
+  Domain bounds: x[-100,100] y[-199.116,400.884] z[-0.162,199.838]
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      topoSetDict;
+}
+
+actions
+(
+    // --- existing turbine/rotatingRegion sets (unchanged, matches your actual file) ---
+    {
+        name    turbineRegion;
+        type    cellSet;
+        action  new;
+        source  boxToCell;
+        sourceInfo { box (-10 -15 95) (10 10 115); }
+    }
+    {
+        name    rotatingRegion;
+        type    cellSet;
+        action  new;
+        source  cylinderToCell;
+        sourceInfo
+        {
+            // Center of turbine is (0.447, -3.022, 105.05)
+            p1      (0.447465 -3.022715 102.5); // Bottom (below blades)
+            p2      (0.447465 -3.022715 107.5); // Top (above blades)
+            radius  2.2;
+        }
+    }
+    {
+        name    rotatingRegion;
+        type    cellZoneSet;
+        action  new;
+        source  setToCellZone;
+        sourceInfo { set rotatingRegion; }
+    }
+
+    // --- NEW: split tunnel_walls into 6 directional sub-patches ---
+
+    // Inlet (yMin)
+    { name split_patch_1_0; type faceSet; action new;    source patchToFace; sourceInfo { patch tunnel_walls; } }
+    { name split_patch_1_0; type faceSet; action subset; source boxToFace;   sourceInfo { box (-105 -201 -5) (105 -198 205); } }
+
+    // Outlet (yMax)
+    { name split_patch_4_0; type faceSet; action new;    source patchToFace; sourceInfo { patch tunnel_walls; } }
+    { name split_patch_4_0; type faceSet; action subset; source boxToFace;   sourceInfo { box (-105 399 -5) (105 402 205); } }
+
+    // Side xMin
+    { name split_patch_3_0; type faceSet; action new;    source patchToFace; sourceInfo { patch tunnel_walls; } }
+    { name split_patch_3_0; type faceSet; action subset; source boxToFace;   sourceInfo { box (-102 -201 -5) (-98 402 205); } }
+
+    // Side xMax
+    { name split_patch_2_0; type faceSet; action new;    source patchToFace; sourceInfo { patch tunnel_walls; } }
+    { name split_patch_2_0; type faceSet; action subset; source boxToFace;   sourceInfo { box (98 -201 -5) (102 402 205); } }
+
+    // Ground (zMin)
+    { name split_patch_0_0; type faceSet; action new;    source patchToFace; sourceInfo { patch tunnel_walls; } }
+    { name split_patch_0_0; type faceSet; action subset; source boxToFace;   sourceInfo { box (-105 -201 -2) (105 402 1); } }
+
+    // Top (zMax)
+    { name split_patch_6_0; type faceSet; action new;    source patchToFace; sourceInfo { patch tunnel_walls; } }
+    { name split_patch_6_0; type faceSet; action subset; source boxToFace;   sourceInfo { box (-105 -201 198) (105 402 202); } }
+);

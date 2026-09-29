@@ -1,0 +1,111 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2406                                  |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    arch        "LSB;label=32;scalar=64";
+    class       volVectorField;
+    location    "0";
+    object      U;
+}
+// ************************************************************************* //
+
+dimensions [0 1 -1 0 0 0 0];
+
+internalField uniform (0 10 0);
+
+boundaryField
+
+{
+
+    "turbine"
+
+    {
+
+        type            rotatingWallVelocity;
+
+        axis            (0 0 1);        // The axis of rotation (e.g., Z-axis)
+
+        origin          (0.447465 -3.022715 105.05);
+
+        omega           5.0;            // Rotational speed in radians per second
+
+    }
+
+
+
+    "tunnel_walls_patch_1_0"   // Inlet - ABL log-law profile
+
+    {
+
+        type            atmBoundaryLayerInletVelocity;
+
+        flowDir         (0 1 0);        // Streamwise direction (global Y)
+
+        zDir            (0 0 1);        // Vertical direction (global Z)
+
+        Uref            10.0;           // Reference speed [m/s]
+
+        Zref            100.0;          // Reference height [m] - building roof level
+
+        z0              uniform 0.5;    // Aerodynamic roughness length [m] - urban fetch
+
+        d               uniform 0.0;    // Displacement height [m]
+
+        kappa           0.41;
+
+        Cmu             0.09;
+
+        value           uniform (0 10 0);
+
+    }
+
+
+
+    "tunnel_walls_patch_4_0"   // Outlet
+
+    {
+
+        type            zeroGradient;
+
+    }
+
+
+
+    "tunnel_walls_patch_0_0"   // Ground
+
+    {
+
+        type            noSlip;
+
+    }
+
+
+
+    "(tunnel_walls_patch_2_0|tunnel_walls_patch_3_0|tunnel_walls_patch_6_0)"   // Sides/top
+
+    {
+
+        type            symmetry;
+
+    }
+
+
+
+    // Building surface (turbine already matched explicitly above)
+
+    "pole"
+
+    {
+
+        type            noSlip;
+
+    }
+
+}

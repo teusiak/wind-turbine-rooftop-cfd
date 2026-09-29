@@ -1,0 +1,48 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2406                                  |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    arch        "LSB;label=32;scalar=64";
+    class       volScalarField;
+    location    "0";
+    object      nut;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 2 -1 0 0 0 0];
+
+internalField   uniform 1e-05;
+
+boundaryField
+{
+    "tunnel_walls_patch_1_0" { type calculated; value uniform 1e-05; }
+    "tunnel_walls_patch_4_0" { type calculated; value uniform 1e-05; }
+
+    "(tunnel_walls_patch_2_0|tunnel_walls_patch_3_0|tunnel_walls_patch_6_0)"   // Sides/top
+    {
+        type            symmetry;
+    }
+
+    "tunnel_walls_patch_0_0"   // Ground - rough wall matching inlet z0
+    {
+        type            atmNutkWallFunction;
+        z0              uniform 0.5;
+        value           uniform 0;
+    }
+
+    "(turbine|pole)"
+    {
+        type            nutkWallFunction; // Smooth wall - crucial for SST k-omega
+        value           uniform 0;
+    }
+}
+
+
+// ************************************************************************* //

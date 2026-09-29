@@ -1,0 +1,121 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  No-building baseline case - only turbine + pole are snapped; outer domain
+  boundary comes directly from blockMeshDict (already the correct shape,
+  no STL needed for it - avoids collapsing the 6 background patches into
+  one merged 'tunnel_walls' patch).
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2406;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      snappyHexMeshDict;
+}
+
+castellatedMesh true;
+snap            true;
+addLayers       false;
+
+geometry
+{
+    "Cut001_Geometry.stl" { type triSurfaceMesh; name tunnel_walls; }
+    "turbine_final.stl" { type triSurfaceMesh; name turbine; }
+    "pole_final.stl"     { type triSurfaceMesh; name pole; }
+
+    rotatingRegion
+    {
+        type searchableCylinder;
+        point1 (0.447 -3.022 101.0);
+        point2 (0.447 -3.022 110.0);
+        radius 2.5;
+    }
+}
+
+castellatedMeshControls
+{
+    maxLocalCells       10000000;
+    maxGlobalCells      2000000;
+    minRefinementCells  0;
+    nCellsBetweenLevels 5;
+    resolveFeatureAngle 30;
+    allowFreeStandingZoneFaces true;
+
+    features
+    (
+        { file "Cut001_Geometry.eMesh"; level 1; }
+        { file "turbine_final.eMesh"; level 6; }
+    );
+
+    refinementSurfaces
+    {
+        tunnel_walls { level (1 2); patchInfo { type patch; } } //patch
+        pole    { level (3 4); patchInfo { type wall; } }
+        turbine { level (5 6); patchInfo { type wall; } }
+    }
+
+    refinementRegions
+    {
+        rotatingRegion
+        {
+            mode inside;
+            levels ((1.0 6));
+            cellZone rotatingRegion;
+            faceZone rotatingRegion;
+            cellZoneInside inside;
+        }
+    }
+
+    // Clearly upstream, in open air, away from turbine/pole geometry.
+    locationInMesh (0.0 -150.0 50.0);
+}
+
+snapControls
+{
+    nSmoothPatch 3;
+    tolerance 2.0;
+    nSolveIter 300;
+    nRelaxIter 5;
+    nFeatureSnapIter 10;
+    implicitFeatureSnap false;
+    explicitFeatureSnap true;
+}
+
+addLayersControls
+{
+    relativeSizes       true;
+    layers              {}
+    expansionRatio      1.2;
+    finalLayerThickness 0.3;
+    minThickness        0.1;
+    nGrow               0;
+    featureAngle        60;
+    nRelaxIter          3;
+    nSmoothSurfaceNormals 1;
+    nSmoothNormals      3;
+    nSmoothThickness    10;
+    maxFaceThicknessRatio 0.5;
+    maxThicknessToMedialRatio 0.3;
+    minMedialAxisAngle  90;
+    nLayerIter          50;
+}
+
+meshQualityControls
+{
+    maxNonOrtho         65;
+    maxBoundarySkewness 20;
+    maxInternalSkewness 4;
+    maxConcave          80;
+    minVol              1e-13;
+    minTetQuality       -1e30;
+    minArea             -1;
+    minTwist            0.01;
+    minDeterminant      0.001;
+    minFaceWeight       0.05;
+    minVolRatio         0.01;
+    minTriangleTwist    -1;
+    nSmoothScale        4;
+    errorReduction      0.75;
+}
+
+mergeTolerance 1e-6;

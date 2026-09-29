@@ -1,0 +1,43 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM
+   \\    /   O peration     |
+    \\  /    A nd           |
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      singleGraph;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+type                sets;
+libs                (sampling);
+
+writeControl        writeTime;
+
+interpolationScheme cellPoint;
+
+setFormat           raw;
+
+sets
+(
+    verticalLine
+    {
+        type        uniform;
+        axis        z;
+
+        // Vertical line upstream of the building, in undisturbed inflow.
+        start       (0.447465 -150 -49);
+        end         (0.447465 -150 248);
+
+        nPoints     200;
+    }
+);
+
+fields              (U p k omega);
+
+// ************************************************************************* //

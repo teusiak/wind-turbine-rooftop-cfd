@@ -1,0 +1,62 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2406                                  |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    arch        "LSB;label=32;scalar=64";
+    class       volScalarField;
+    location    "0";
+    object      k;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 2 -2 0 0 0 0];
+
+
+
+internalField   uniform 0.375; // Initial guess for 10m/s
+
+
+
+boundaryField
+
+{
+
+    "tunnel_walls_patch_1_0"   // Inlet - ABL log-law k profile
+    {
+        type            atmBoundaryLayerInletK;
+        flowDir         (0 1 0);
+        zDir            (0 0 1);
+        Uref            10.0;
+        Zref            100.0;
+        z0              uniform 0.5;
+        d               uniform 0.0;
+        kappa           0.41;
+        Cmu             0.09;
+        value           $internalField;
+    }
+
+    "tunnel_walls_patch_4_0" { type zeroGradient; }
+
+    "(tunnel_walls_patch_2_0|tunnel_walls_patch_3_0|tunnel_walls_patch_6_0)"   // Sides/top
+    {
+        type            symmetry;
+    }
+
+    "(turbine|pole|tunnel_walls_patch_0_0)"
+    {
+
+        type            kqRWallFunction; // Stable alternative to kLowRe
+
+        value           $internalField;
+
+    }
+
+}

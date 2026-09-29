@@ -1,0 +1,39 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2406                                  |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    arch        "LSB;label=32;scalar=64";
+    class       volScalarField;
+    location    "0";
+    object      p;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 2 -2 0 0 0 0];
+
+internalField   uniform 0;
+
+boundaryField
+{
+    "turbine" { type zeroGradient; }
+    "pole" { type zeroGradient; }
+    "tunnel_walls_patch_0_0" { type zeroGradient; }
+    "tunnel_walls_patch_1_0" { type zeroGradient; } // Inlet.  
+    "tunnel_walls_patch_4_0" { type fixedValue; value uniform 0; } // Outlet.  
+
+    "(tunnel_walls_patch_2_0|tunnel_walls_patch_3_0|tunnel_walls_patch_6_0)"   // Sides/top
+    {
+        type            symmetry;
+    }
+
+    ".*" { type symmetry; } // Ground/Building/Turbine   zeroGradient
+}
+
+// ************************************************************************* //

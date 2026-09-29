@@ -1,0 +1,58 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  Reassigns the 6 directional faceSets (created in topoSetDict) from the
+  single merged 'tunnel_walls' patch into 6 separately-named, correctly-typed
+  patches - restoring the per-face boundary condition control needed for the
+  ABL inlet / outlet / symmetry sides+top / rough ground setup.
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      createPatchDict;
+}
+
+pointSync false;
+
+patches
+(
+    {
+        name            tunnel_walls_patch_1_0;   // Inlet
+        patchInfo       { type patch; }
+        constructFrom   set;
+        set             split_patch_1_0;
+    }
+    {
+        name            tunnel_walls_patch_4_0;   // Outlet
+        patchInfo       { type patch; }
+        constructFrom   set;
+        set             split_patch_4_0;
+    }
+    {
+        name            tunnel_walls_patch_3_0;   // Side (symmetry)
+        patchInfo       { type symmetry; }
+        constructFrom   set;
+        set             split_patch_3_0;
+    }
+    {
+        name            tunnel_walls_patch_2_0;   // Side (symmetry)
+        patchInfo       { type symmetry; }
+        constructFrom   set;
+        set             split_patch_2_0;
+    }
+    {
+        name            tunnel_walls_patch_0_0;   // Ground (wall)
+        patchInfo       { type wall; }
+        constructFrom   set;
+        set             split_patch_0_0;
+    }
+    {
+        name            tunnel_walls_patch_6_0;   // Top (symmetry)
+        patchInfo       { type symmetry; }
+        constructFrom   set;
+        set             split_patch_6_0;
+    }
+);
+
+
+// ************************************************************************* //

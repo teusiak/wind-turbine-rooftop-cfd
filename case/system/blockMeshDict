@@ -1,0 +1,57 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  No-building baseline case - domain matches Cut001_Geometry_nobuilding.stl
+  exactly, so no outer-boundary snapping is needed; only turbine+pole are
+  snapped by snappyHexMesh.
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     4.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      blockMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+xMin    -150.00000000000009;
+xMax    150.00000000000006;
+yMin    -249.11597656200016;
+yMax    450.88402343800016;
+zMin    -50.16200000000018;
+zMax    249.8380000000002;
+cellsX  40;
+cellsY  80;
+cellsZ  40;
+
+vertices
+(
+    ( $xMin  $yMin  $zMin )
+    ( $xMax  $yMin  $zMin )
+    ( $xMax  $yMax  $zMin )
+    ( $xMin  $yMax  $zMin )
+    ( $xMin  $yMin  $zMax )
+    ( $xMax  $yMin  $zMax )
+    ( $xMax  $yMax  $zMax )
+    ( $xMin  $yMax  $zMax )
+);
+
+blocks
+(
+    hex (0 1 2 3 4 5 6 7) ($cellsX $cellsY $cellsZ) simpleGrading (1 1 1)
+);
+
+edges
+(
+);
+
+boundary
+(
+    tunnel_walls_patch_3_0 { type symmetry; faces ((0 4 7 3)); } // xMin (side)
+    tunnel_walls_patch_2_0 { type symmetry; faces ((1 5 6 2)); } // xMax (side)
+    tunnel_walls_patch_1_0 { type patch;    faces ((0 1 2 3)); } // yMin (inlet)
+    tunnel_walls_patch_4_0 { type patch;    faces ((4 5 6 7)); } // yMax (outlet)
+    tunnel_walls_patch_0_0 { type wall;     faces ((1 0 4 5)); } // zMin (ground)
+    tunnel_walls_patch_6_0 { type symmetry; faces ((3 7 6 2)); } // zMax (top)
+);
+
+// ************************************************************************* //

@@ -1,0 +1,17 @@
+# OpenFOAM generated data (regenerate with scripts/Allmesh + solver run)
+case/constant/polyMesh/
+case/constant/extendedFeatureEdgeMesh/
+case/constant/triSurface/*.eMesh
+case/processor*/
+case/[1-9]*/
+case/postProcessing/
+case/VTK/
+case/VTK1/
+case/log.*
+case/*.foam
+case/*.obj
+
+# OS / editor cruft
+.DS_Store
+__pycache__/
+*.pyc

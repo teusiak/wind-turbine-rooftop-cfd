@@ -1,0 +1,16 @@
+solid patch_1_0
+ facet normal 0.0 -1.0 0.0
+  outer loop
+   vertex -100.0 -199.11596875 199.838
+   vertex -100.0 -199.11596875 -0.162
+   vertex 100.0 -199.11596875 199.838
+  endloop
+ endfacet
+ facet normal 0.0 -1.0 -0.0
+  outer loop
+   vertex 100.0 -199.11596875 199.838
+   vertex -100.0 -199.11596875 -0.162
+   vertex 100.0 -199.11596875 -0.162
+  endloop
+ endfacet
+endsolid patch_1_0
